@@ -9,7 +9,7 @@
 
 #include "gl_canvas2d.h"
 
-#include "Retained.h"
+#include "Controller.h"
 
 #define GLEW_STATIC
 #include <GL/glew.h>
@@ -22,7 +22,7 @@
 
 GLFWwindow* window;
 double mouseX = 0, mouseY = 0;
-Controller controller;
+Controller controller(screenWidth, screenHeight);
 
 const float Colors[14][3] =
 {
@@ -167,7 +167,6 @@ void CV::run() {
 
         controller.newFrame();
         render(); // funcao do usuario
-        controller.render(screenWidth, screenHeight);
         glfwSwapBuffers(window);
         glfwPollEvents();
 
@@ -190,11 +189,10 @@ void CV::run() {
 
 void CV::point(float x, float y)
 {
-    Command cmd{};
-	cmd.type = CommandType::TYPE_POINT;
-    cmd.point.x = x;
-    cmd.point.y = y;
-    controller.submit(cmd);
+	CommandPoint cmd{};
+    cmd.x = x;
+    cmd.y = y;
+    controller.processPoint(cmd);
 }
 
 void CV::point(Vector2 pos)
@@ -204,17 +202,16 @@ void CV::point(Vector2 pos)
 
 void CV::line(float x1, float y1, float x2, float y2)
 {
-    Command cmd{};
-	cmd.type = CommandType::TYPE_LINE;
+    CommandLine cmd{};
     if (x1 > x2 && y1 > y2) {
         std::swap(x1, x2);
         std::swap(y1, y2);
     }
-    cmd.line.x1 = x1;
-    cmd.line.y1 = y1;
-    cmd.line.x2 = x2;
-    cmd.line.y2 = y2;
-    controller.submit(cmd);
+    cmd.x1 = x1;
+    cmd.y1 = y1;
+    cmd.x2 = x2;
+    cmd.y2 = y2;
+    controller.processLine(cmd);
 }
 
 void CV::line(Vector2 p1, Vector2 p2)
@@ -224,18 +221,17 @@ void CV::line(Vector2 p1, Vector2 p2)
 
 void CV::rect(float x1, float y1, float x2, float y2)
 {
-    Command cmd{};
-	cmd.type = CommandType::TYPE_RECT;
+    CommandRect cmd{};
     if (x1 > x2 && y1 > y2) {
         std::swap(x1, x2);
         std::swap(y1, y2);
     }
-    cmd.rect.x1 = x1;
-    cmd.rect.y1 = y1;
-    cmd.rect.x2 = x2;
-    cmd.rect.y2 = y2;
-    cmd.rect.fill = false;
-    controller.submit(cmd);
+    cmd.x1 = x1;
+    cmd.y1 = y1;
+    cmd.x2 = x2;
+    cmd.y2 = y2;
+    cmd.fill = false;
+    controller.processRect(cmd);
 }
 
 void CV::rect(Vector2 p1, Vector2 p2)
@@ -245,18 +241,17 @@ void CV::rect(Vector2 p1, Vector2 p2)
 
 void CV::rectFill(float x1, float y1, float x2, float y2)
 {
-    Command cmd{};
-	cmd.type = CommandType::TYPE_RECT;
+    CommandRect cmd{};
     if (x1 > x2 && y1 > y2) {
         std::swap(x1, x2);
         std::swap(y1, y2);
     }
-    cmd.rect.x1 = x1;
-    cmd.rect.y1 = y1;
-    cmd.rect.x2 = x2;
-    cmd.rect.y2 = y2;
-    cmd.rect.fill = true;
-	controller.submit(cmd);
+    cmd.x1 = x1;
+    cmd.y1 = y1;
+    cmd.x2 = x2;
+    cmd.y2 = y2;
+    cmd.fill = true;
+	controller.processRect(cmd);
 }
 
 void CV::rectFill(Vector2 p1, Vector2 p2)
@@ -266,36 +261,33 @@ void CV::rectFill(Vector2 p1, Vector2 p2)
 
 void CV::polygon(float vx[], float vy[], int n_elems)
 {
-    Command cmd{};
-	cmd.type = CommandType::TYPE_POLY;
-    cmd.polygon.vx = vx;
-    cmd.polygon.vy = vy;
-    cmd.polygon.n_elems = n_elems;
-    cmd.polygon.fill = false;
-    controller.submit(cmd);
+    CommandPolygon cmd{};
+    cmd.vx = vx;
+    cmd.vy = vy;
+    cmd.n_elems = n_elems;
+    cmd.fill = false;
+    controller.processPoly(cmd);
 }
 
 void CV::polygonFill(float vx[], float vy[], int n_elems)
 {
-    Command cmd{};
-	cmd.type = CommandType::TYPE_POLY;
-    cmd.polygon.vx = vx;
-    cmd.polygon.vy = vy;
-    cmd.polygon.n_elems = n_elems;
-    cmd.polygon.fill = true;
-    controller.submit(cmd);
+     CommandPolygon cmd{};
+    cmd.vx = vx;
+    cmd.vy = vy;
+    cmd.n_elems = n_elems;
+    cmd.fill = true;
+    controller.processPoly(cmd);
 }
 
 void CV::circle(float x, float y, float radius, int div)
 {
-    Command cmd{};
-	cmd.type = CommandType::TYPE_CIRCLE;
-    cmd.circle.x = x;
-    cmd.circle.y = y;
-    cmd.circle.radius = radius;
-    cmd.circle.div = div;
-    cmd.circle.fill = false;
-    controller.submit(cmd);
+    CommandCircle cmd{};
+    cmd.x = x;
+    cmd.y = y;
+    cmd.radius = radius;
+    cmd.div = div;
+    cmd.fill = false;
+    controller.processCircle(cmd);
 }
 
 void CV::circle(Vector2 pos, float radius, int div)
@@ -305,14 +297,13 @@ void CV::circle(Vector2 pos, float radius, int div)
 
 void CV::circleFill(float x, float y, float radius, int div)
 {
-    Command cmd{};
-	cmd.type = CommandType::TYPE_CIRCLE;
-    cmd.circle.y = y;
-    cmd.circle.x = x;
-    cmd.circle.radius = radius;
-    cmd.circle.div = div;
-    cmd.circle.fill = true;
-    controller.submit(cmd);
+    CommandCircle cmd{};
+    cmd.x = x;
+    cmd.y = y;
+    cmd.radius = radius;
+    cmd.div = div;
+    cmd.fill = true;
+    controller.processCircle(cmd);
 }
 
 void CV::circleFill(Vector2 pos, float radius, int div)
@@ -322,13 +313,12 @@ void CV::circleFill(Vector2 pos, float radius, int div)
 
 void CV::color(float r, float g, float b, float alpha)
 {
-    Command cmd{};
-	cmd.type = CommandType::TYPE_COLOR;
-    cmd.color.g = g;
-    cmd.color.r = r;
-    cmd.color.b = b;
-    cmd.color.alpha = alpha;
-    controller.submit(cmd);
+    CommandColor cmd{};
+    cmd.g = g;
+    cmd.r = r;
+    cmd.b = b;
+    cmd.alpha = alpha;
+    controller.processColor(cmd);
 }
 
 void CV::color(float r, float g, float b)
@@ -344,23 +334,21 @@ void CV::color(CV::Color color)
 
 void CV::clear(float r, float g, float b)
 {
-    Command cmd{};
-	cmd.type = CommandType::TYPE_CLEAR;
-    cmd.clear.r = r;
-    cmd.clear.g = g;
-    cmd.clear.b = b;
-    controller.submit(cmd);
+    CommandClear cmd{};
+    cmd.r = r;
+    cmd.g = g;
+    cmd.b = b;
+    controller.processClear(cmd);
 }
 
 void CV::text(float x, float y, const char* t, float fontSize)
 {
-    Command cmd{};
-	cmd.type = CommandType::TYPE_TEXT;
-    cmd.text.x = x;
-    cmd.text.y = y;
-    cmd.text.t = t;
-    cmd.text.fontSize = fontSize;
-    controller.submit(cmd);
+    CommandText cmd{};
+    cmd.x = x;
+    cmd.y = y;
+    cmd.t = t;
+    cmd.fontSize = fontSize;
+    controller.processText(cmd);
 }
 
 void CV::text(Vector2 pos, const char* t, float fontSize)
@@ -380,11 +368,10 @@ void CV::text(Vector2 pos, float valor, float fontSize)
 
 void CV::translate(float x, float y)
 {
-    Command cmd{};
-	cmd.type = CommandType::TYPE_TRANSLATE;
-    cmd.translate.x = x;
-    cmd.translate.y = y;
-    controller.submit(cmd);
+    CommandTranslate cmd{};
+    cmd.x = x;
+    cmd.y = y;
+    controller.processTranslate(cmd);
 }
 
 void CV::translate(Vector2 pos)

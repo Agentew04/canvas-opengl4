@@ -7,7 +7,7 @@
 * Tambem gerencia os VBOs, VAOs e shaders.
 */
 
-#include "Retained.h"
+#include "Controller.h"
 
 #define GLEW_STATIC
 #include <GL/glew.h>
@@ -23,6 +23,10 @@ void DrawStructure::reset() {
     positions.clear();
     colors.clear();
     uv.clear();
+}
+
+Controller::Controller(int& screenWidth, int& screenHeight)
+    : screenWidth(screenWidth), screenHeight(screenHeight) {
 }
 
 void Controller::compileShaders() {
@@ -41,10 +45,6 @@ void Controller::compileShaders() {
         system("pause");
         exit(EXIT_FAILURE);
     }
-}
-
-void Controller::submit(const Command &cmd) {
-    commands.push_back(cmd);
 }
 
 void Controller::init() {
@@ -135,70 +135,16 @@ void Controller::createTextures() {
 }
 
 void Controller::newFrame() {
-    commands.clear();
     fillStructure.reset();
     lineStructure.reset();
 	textStructure.reset();
 }
 
-void Controller::render(int screenWidth, int screenHeight) {
-    build();
-    draw(screenWidth, screenHeight);
-}
-
-void Controller::build() {
-    glm::vec2 currentTranslation{ 0.0f, 0.0f };
-    glm::vec3 currentColor{ 0.0f, 0.0f, 0.0f };
-    float far = commands.size() * 0.1f + 1;
-
-    for (int i = 0; i < commands.size(); i++) {
-        const Command &cmd = commands[i];
-        float z = far - i * 0.1f;
-        switch (cmd.type) {
-        case CommandType::TYPE_NONE:
-            printf("Invalid NONE command!\n");
-            break;
-        case CommandType::TYPE_POINT:
-			processPoint(cmd.point, z, currentColor, currentTranslation);
-            break;
-        case CommandType::TYPE_COLOR:
-            currentColor[0] = cmd.color.r;
-            currentColor[1] = cmd.color.g;
-            currentColor[2] = cmd.color.b;
-            break;
-        case CommandType::TYPE_CLEAR:
-            glClearColor(cmd.clear.r, cmd.clear.g, cmd.clear.b, 1.0f);
-            break;
-        case CommandType::TYPE_RECT:
-            processRect(cmd.rect, z, currentColor, currentTranslation);
-            break;
-        case CommandType::TYPE_CIRCLE:
-            processCircle(cmd.circle, z, currentColor, currentTranslation);
-            break;
-        case CommandType::TYPE_POLY:
-            processPoly(cmd.polygon, z, currentColor, currentTranslation);
-            break;
-        case CommandType::TYPE_LINE:
-            processLine(cmd.line, z, currentColor, currentTranslation);
-            break;
-        case CommandType::TYPE_TRANSLATE:
-			currentTranslation[0] = cmd.translate.x;
-			currentTranslation[1] = cmd.translate.y;
-            break;
-        case CommandType::TYPE_TEXT:
-            processText(cmd.text, z, currentColor, currentTranslation);
-            break;
-        }
-    }
-
-}
-
-void Controller::draw(int screenWidth, int screenHeight) {
-    float far = commands.size() * 0.1f + 1;
-    mat4 projection = glm::ortho(0.0f, (float)screenWidth, 0.0f, (float)screenHeight, 0.0f, far);
+void Controller::drawFilled() {
+    mat4 projection = glm::ortho(0.0f, (float)screenWidth, 0.0f, (float)screenHeight, 0.0f, 10.0f);
     uiShader.use();
     uiShader.setUniform("projection", projection);
-    
+
     // draw triangles
     glBindVertexArray(fillStructure.vao);
     glBindBuffer(GL_ARRAY_BUFFER, fillStructure.vbo_positions);
@@ -206,6 +152,12 @@ void Controller::draw(int screenWidth, int screenHeight) {
     glBindBuffer(GL_ARRAY_BUFFER, fillStructure.vbo_colors);
     glBufferData(GL_ARRAY_BUFFER, fillStructure.colors.size() * sizeof(glm::vec3), fillStructure.colors.data(), GL_DYNAMIC_DRAW);
     glDrawArrays(GL_TRIANGLES, 0, fillStructure.positions.size());
+}
+
+void Controller::drawLines() {
+    mat4 projection = glm::ortho(0.0f, (float)screenWidth, 0.0f, (float)screenHeight, 0.0f, 10.0f);
+    uiShader.use();
+    uiShader.setUniform("projection", projection);
 
     // draw lines
     glBindVertexArray(lineStructure.vao);
@@ -214,74 +166,86 @@ void Controller::draw(int screenWidth, int screenHeight) {
     glBindBuffer(GL_ARRAY_BUFFER, lineStructure.vbo_colors);
     glBufferData(GL_ARRAY_BUFFER, lineStructure.colors.size() * sizeof(glm::vec3), lineStructure.colors.data(), GL_DYNAMIC_DRAW);
     glDrawArrays(GL_LINES, 0, lineStructure.positions.size());
+}
 
-    // draw text
+void Controller::drawText() {
+    mat4 projection = glm::ortho(0.0f, (float)screenWidth, 0.0f, (float)screenHeight, 0.0f, 10.0f);
     textShader.use();
-	textShader.setUniform("projection", projection);
+    textShader.setUniform("projection", projection);
     textShader.setUniform("threshold", 0.45f);
     textShader.setUniform("smoothness", 0.5f);
     glBindTexture(GL_TEXTURE_2D, textStructure.texture);
     textShader.setUniform("atlas", textStructure.texture);
-	glBindVertexArray(textStructure.vao);
-	glBindBuffer(GL_ARRAY_BUFFER, textStructure.vbo_positions);
-	glBufferData(GL_ARRAY_BUFFER, textStructure.positions.size() * sizeof(glm::vec3), textStructure.positions.data(), GL_DYNAMIC_DRAW);
-	glBindBuffer(GL_ARRAY_BUFFER, textStructure.vbo_colors);
-	glBufferData(GL_ARRAY_BUFFER, textStructure.colors.size() * sizeof(glm::vec3), textStructure.colors.data(), GL_DYNAMIC_DRAW);
-	glBindBuffer(GL_ARRAY_BUFFER, textStructure.vbo_uv);
-	glBufferData(GL_ARRAY_BUFFER, textStructure.uv.size() * sizeof(glm::vec2), textStructure.uv.data(), GL_DYNAMIC_DRAW);
-	glDrawArrays(GL_TRIANGLES, 0, textStructure.positions.size());
+
+    // draw text
+    glBindVertexArray(textStructure.vao);
+    glBindBuffer(GL_ARRAY_BUFFER, textStructure.vbo_positions);
+    glBufferData(GL_ARRAY_BUFFER, textStructure.positions.size() * sizeof(glm::vec3), textStructure.positions.data(), GL_DYNAMIC_DRAW);
+    glBindBuffer(GL_ARRAY_BUFFER, textStructure.vbo_colors);
+    glBufferData(GL_ARRAY_BUFFER, textStructure.colors.size() * sizeof(glm::vec3), textStructure.colors.data(), GL_DYNAMIC_DRAW);
+    glBindBuffer(GL_ARRAY_BUFFER, textStructure.vbo_uv);
+    glBufferData(GL_ARRAY_BUFFER, textStructure.uv.size() * sizeof(glm::vec2), textStructure.uv.data(), GL_DYNAMIC_DRAW);
+    glDrawArrays(GL_TRIANGLES, 0, textStructure.positions.size());
     glBindTexture(GL_TEXTURE_2D, 0);
 }
 
-void Controller::processRect(const CommandRect& cmd, float z, const glm::vec3& color, const glm::vec2& translation) {
+void Controller::processRect(const CommandRect& cmd) {
 	float x1 = cmd.x1 + translation.x;
 	float y1 = cmd.y1 + translation.y;
 	float x2 = cmd.x2 + translation.x;
 	float y2 = cmd.y2 + translation.y;
 
     if (cmd.fill) {
-        fillStructure.positions.push_back(glm::vec3(x1, y1, -z));
-        fillStructure.positions.push_back(glm::vec3(x2, y1, -z));
-        fillStructure.positions.push_back(glm::vec3(x2, y2, -z));
-        fillStructure.positions.push_back(glm::vec3(x1, y1, -z));
-        fillStructure.positions.push_back(glm::vec3(x2, y2, -z));
-        fillStructure.positions.push_back(glm::vec3(x1, y2, -z));
+        fillStructure.reset();
+        fillStructure.positions.push_back(glm::vec3(x1, y1, 1));
+        fillStructure.positions.push_back(glm::vec3(x2, y1, 1));
+        fillStructure.positions.push_back(glm::vec3(x2, y2, 1));
+        fillStructure.positions.push_back(glm::vec3(x1, y1, 1));
+        fillStructure.positions.push_back(glm::vec3(x2, y2, 1));
+        fillStructure.positions.push_back(glm::vec3(x1, y2, 1));
         for (int i = 0; i < 6; i++) {
             fillStructure.colors.push_back(color);
         }
+        drawFilled();
     }
     else {
-        lineStructure.positions.push_back(glm::vec3(x1, y1, -z));
-        lineStructure.positions.push_back(glm::vec3(x2, y1, -z));
-        lineStructure.positions.push_back(glm::vec3(x2, y1, -z));
-        lineStructure.positions.push_back(glm::vec3(x2, y2, -z));
-        lineStructure.positions.push_back(glm::vec3(x2, y2, -z));
-        lineStructure.positions.push_back(glm::vec3(x1, y2, -z));
-        lineStructure.positions.push_back(glm::vec3(x1, y2, -z));
-        lineStructure.positions.push_back(glm::vec3(x1, y1, -z));
+		lineStructure.reset();
+        lineStructure.positions.push_back(glm::vec3(x1, y1, 1));
+        lineStructure.positions.push_back(glm::vec3(x2, y1, 1));
+        lineStructure.positions.push_back(glm::vec3(x2, y1, 1));
+        lineStructure.positions.push_back(glm::vec3(x2, y2, 1));
+        lineStructure.positions.push_back(glm::vec3(x2, y2, 1));
+        lineStructure.positions.push_back(glm::vec3(x1, y2, 1));
+        lineStructure.positions.push_back(glm::vec3(x1, y2, 1));
+        lineStructure.positions.push_back(glm::vec3(x1, y1, 1));
         for (int i = 0; i < 8; i++) {
             lineStructure.colors.push_back(color);
         }
+		drawLines();
     }
 }
 
-void Controller::processPoint(const CommandPoint& cmd, float z, const glm::vec3& color, const glm::vec2& translation){
+void Controller::processPoint(const CommandPoint& cmd){
 	float x = cmd.x + translation.x;
 	float y = cmd.y + translation.y;
-    fillStructure.positions.push_back(glm::vec3(x, y, -z));
-    fillStructure.positions.push_back(glm::vec3(x+1, y, -z));
-    fillStructure.positions.push_back(glm::vec3(x+1, y+1, -z));
-    fillStructure.positions.push_back(glm::vec3(x, y, -z));
-    fillStructure.positions.push_back(glm::vec3(x+1, y+1, -z));
-    fillStructure.positions.push_back(glm::vec3(x, y+1, -z));
+	fillStructure.reset();
+    fillStructure.positions.push_back(glm::vec3(x, y, 1));
+    fillStructure.positions.push_back(glm::vec3(x+1, y, 1));
+    fillStructure.positions.push_back(glm::vec3(x+1, y+1, 1));
+    fillStructure.positions.push_back(glm::vec3(x, y, 1));
+    fillStructure.positions.push_back(glm::vec3(x+1, y+1, 1));
+    fillStructure.positions.push_back(glm::vec3(x, y+1, 1));
     for (int i = 0; i < 6; i++) {
         fillStructure.colors.push_back(color);
     }
+	drawFilled();
 }
 
-void Controller::processCircle(const CommandCircle& cmd, float z, const glm::vec3& color, const glm::vec2& translation){
+void Controller::processCircle(const CommandCircle& cmd){
 	float x = cmd.x + translation.x;
 	float y = cmd.y + translation.y;
+	DrawStructure& structure = cmd.fill ? fillStructure : lineStructure;
+	structure.reset();
     for (int i = 0; i < cmd.div; i++) {
         float angle1 = 2 * 3.14159265359f * i / cmd.div;
         float angle2 = 2 * 3.14159265359f * (i + 1) / cmd.div;
@@ -291,45 +255,55 @@ void Controller::processCircle(const CommandCircle& cmd, float z, const glm::vec
         float y2 = y + sin(angle2) * cmd.radius;
 
         if (cmd.fill) {
-            fillStructure.positions.push_back(glm::vec3(x, y, -z));
-            fillStructure.positions.push_back(glm::vec3(x1, y1, -z));
-            fillStructure.positions.push_back(glm::vec3(x2, y2, -z));
+			
+            structure.positions.push_back(glm::vec3(x, y, 1));
+            structure.positions.push_back(glm::vec3(x1, y1, 1));
+            structure.positions.push_back(glm::vec3(x2, y2, 1));
             for (int j = 0; j < 3; j++) {
-                fillStructure.colors.push_back(color);
+                structure.colors.push_back(color);
             }
         }
         else {
-            lineStructure.positions.push_back(glm::vec3(x1, y1, -z));
-            lineStructure.positions.push_back(glm::vec3(x2, y2, -z));
+            structure.positions.push_back(glm::vec3(x1, y1, 1));
+            structure.positions.push_back(glm::vec3(x2, y2, 1));
             for (int j = 0; j < 2; j++) {
-                lineStructure.colors.push_back(color);
+                structure.colors.push_back(color);
             }
         }
     }
+	if (cmd.fill) {
+		drawFilled();
+	}
+    else {
+        drawLines();
+    }
 }
 
-void Controller::processPoly(const CommandPolygon& cmd, float z, const glm::vec3& color, const glm::vec2& translation){
+void Controller::processPoly(const CommandPolygon& cmd){
     // TODO: simple fan triangulation
 }
 
-void Controller::processLine(const CommandLine& cmd, float z, const glm::vec3& color, const glm::vec2& translation){
+void Controller::processLine(const CommandLine& cmd){
 	float x1 = cmd.x1 + translation.x;
 	float y1 = cmd.y1 + translation.y;
 	float x2 = cmd.x2 + translation.x;
 	float y2 = cmd.y2 + translation.y;
-	lineStructure.positions.push_back(glm::vec3(x1, y1, -z));
-	lineStructure.positions.push_back(glm::vec3(x2, y2, -z));
+	lineStructure.reset();
+	lineStructure.positions.push_back(glm::vec3(x1, y1, 1));
+	lineStructure.positions.push_back(glm::vec3(x2, y2, 1));
     for (int i = 0; i < 2; i++) {
         lineStructure.colors.push_back(color);
     }
+	drawLines();
 }
 
-void Controller::processText(const CommandText& cmd, float z, const glm::vec3& color, const glm::vec2& translation) {
+void Controller::processText(const CommandText& cmd) {
 	glm::vec2 cursor = { cmd.x + translation.x, cmd.y + translation.y };
 	auto str = cmd.t;
 	const Sdf::Atlas &atlas = sdf.getAtlas();
     int i = 0;
     char currentChar = str[0];
+	textStructure.reset();
     while (currentChar != '\0') {
 		const Sdf::Glyph &glyph = sdf.getGlyph(currentChar);
 
@@ -342,12 +316,12 @@ void Controller::processText(const CommandText& cmd, float z, const glm::vec3& c
 		float x2 = cursor.x + glyph.planeRight * cmd.fontSize;
 		float y2 = cursor.y + glyph.planeTop * cmd.fontSize;
 
-		textStructure.positions.push_back(glm::vec3(x1, y1, -z));
-		textStructure.positions.push_back(glm::vec3(x2, y1, -z));
-		textStructure.positions.push_back(glm::vec3(x2, y2, -z));
-		textStructure.positions.push_back(glm::vec3(x1, y1, -z));
-		textStructure.positions.push_back(glm::vec3(x2, y2, -z));
-		textStructure.positions.push_back(glm::vec3(x1, y2, -z));
+		textStructure.positions.push_back(glm::vec3(x1, y1, 1));
+		textStructure.positions.push_back(glm::vec3(x2, y1, 1));
+		textStructure.positions.push_back(glm::vec3(x2, y2, 1));
+		textStructure.positions.push_back(glm::vec3(x1, y1, 1));
+		textStructure.positions.push_back(glm::vec3(x2, y2, 1));
+		textStructure.positions.push_back(glm::vec3(x1, y2, 1));
 
 		for (int i = 0; i < 6; i++) {
 			textStructure.colors.push_back(color);
@@ -364,4 +338,22 @@ void Controller::processText(const CommandText& cmd, float z, const glm::vec3& c
 		cursor.x += glyph.advance * cmd.fontSize;
 		currentChar = str[++i];
     }
+	if (textStructure.positions.size() > 0) {
+		drawText();
+	}
+}
+
+void Controller::processColor(const CommandColor& cmd) {
+	color.r = cmd.r;
+	color.g = cmd.g;
+	color.b = cmd.b;
+}
+void Controller::processTranslate(const CommandTranslate& cmd) {
+	translation.x = cmd.x;
+	translation.y = cmd.y;
+}
+
+void Controller::processClear(const CommandClear& cmd) {
+    glClearColor(cmd.r, cmd.g, cmd.b, 1.0f);
+    glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 }

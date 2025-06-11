@@ -136,13 +136,13 @@
     <ClCompile Include="Canvas2D\glslprogram.cpp" />
     <ClCompile Include="Canvas2D\gl_canvas2d.cpp" />
     <ClCompile Include="main.cpp" />
-    <ClCompile Include="Canvas2D\Retained.cpp" />
+    <ClCompile Include="Canvas2D\Controller.cpp" />
     <ClCompile Include="Canvas2D\Sdf.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Canvas2D\glslprogram.h" />
     <ClInclude Include="Canvas2D\gl_canvas2d.h" />
-    <ClInclude Include="Canvas2D\Retained.h" />
+    <ClInclude Include="Canvas2D\Controller.h" />
     <ClInclude Include="Canvas2D\Sdf.h" />
     <ClInclude Include="Vector2.h" />
   </ItemGroup>

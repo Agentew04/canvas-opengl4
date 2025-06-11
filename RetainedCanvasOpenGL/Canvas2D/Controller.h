@@ -2,9 +2,8 @@
 * Autor: Rodrigo Appelt
 * Data: 10/03/2025
 *
-* Classe que controla a logica de construcao dos
-* comandos enviados pela Canvas2D.
-* Tambem gerencia os VBOs, VAOs e shaders.
+* Classe que gerencia os recursos do OpenGL 4.0
+* e desenho de primitivas 2D.
 */
 
 #pragma once
@@ -121,32 +120,43 @@ public:
 
 class Controller {
 public:
+	Controller(int& screenWidth, int& screenHeight);
+
+	/// <summary>
+	/// Compila shaders, cria texturas e buffers.
+	/// </summary>
 	void init();
-	void submit(const Command &command);
 	void newFrame();
-	void render(int screenWidth, int screenHeight);
+
+	void processColor(const CommandColor& cmd);
+	void processTranslate(const CommandTranslate& cmd);
+	void processClear(const CommandClear& cmd);
+	void processRect(const CommandRect& cmd);
+	void processPoint(const CommandPoint& cmd);
+	void processCircle(const CommandCircle& cmd);
+	void processPoly(const CommandPolygon& cmd);
+	void processLine(const CommandLine& cmd);
+	void processText(const CommandText& cmd);
 private:
+	int &screenWidth;
+	int &screenHeight;
 	GLSLProgram uiShader;
 	GLSLProgram textShader;
 	Sdf sdf;
+	// essas structures tem os vbos e vaos para cada tipo de desenho
 	DrawStructure fillStructure;
 	DrawStructure lineStructure;
 	DrawStructure textStructure;
-	std::vector<Command> commands;
-	void compileShaders();
 
+	void drawFilled();
+	void drawLines();
+	void drawText();
+	void compileShaders();
 	void createUiBuffers();
 	void createTextBuffers();
 	void createTextures();
 
-	void build();
-	void draw(int screenWidth, int screenHeight);
-
-	// primitive processing
-	void processRect(const CommandRect& cmd, float z, const glm::vec3& color, const glm::vec2& translation);
-	void processPoint(const CommandPoint& cmd, float z, const glm::vec3& color, const glm::vec2& translation);
-	void processCircle(const CommandCircle& cmd, float z, const glm::vec3& color, const glm::vec2& translation);
-	void processPoly(const CommandPolygon& cmd, float z, const glm::vec3& color, const glm::vec2& translation);
-	void processLine(const CommandLine& cmd, float z, const glm::vec3& color, const glm::vec2& translation);
-	void processText(const CommandText& cmd, float z, const glm::vec3& color, const glm::vec2& translation);
+	// variaveis de controle internas
+	glm::vec2 translation{ 0.0f, 0.0f };
+	glm::vec3 color{ 0.0f, 0.0f, 0.0f };
 };

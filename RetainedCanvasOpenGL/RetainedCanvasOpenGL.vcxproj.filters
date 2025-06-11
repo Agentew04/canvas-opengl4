@@ -24,7 +24,7 @@
     <ClCompile Include="main.cpp">
       <Filter>Arquivos de Origem</Filter>
     </ClCompile>
-    <ClCompile Include="Canvas2D\Retained.cpp">
+    <ClCompile Include="Canvas2D\Controller.cpp">
       <Filter>Canvas2D</Filter>
     </ClCompile>
     <ClCompile Include="Canvas2D\gl_canvas2d.cpp">
@@ -47,7 +47,7 @@
     <ClInclude Include="Canvas2D\glslprogram.h">
       <Filter>Arquivos de Cabeçalho</Filter>
     </ClInclude>
-    <ClInclude Include="Canvas2D\Retained.h">
+    <ClInclude Include="Canvas2D\Controller.h">
       <Filter>Arquivos de Cabeçalho</Filter>
     </ClInclude>
     <ClInclude Include="Canvas2D\Sdf.h">

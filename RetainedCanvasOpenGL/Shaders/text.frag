@@ -16,7 +16,7 @@ float median(float r, float g, float b) {
 void main() {
 	// Sample the texture
 	vec3 value = texture(atlas, fragAtlasUv).rgb;
-	
+
 	float alpha = smoothstep(
 		threshold - smoothness,
 		threshold + smoothness,

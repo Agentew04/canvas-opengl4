@@ -49,7 +49,7 @@ void keyboardUp(int key);
 void mouse(int button, int state, int wheel, int direction, int x, int y);
 
 // iniciar
-void initGlfw(int w, int h, const char* title);
+void initGlfw(int w, int h, const char* title, bool antiAliasing);
 void initCallbacks();
 void initGlew();
 void initOpenGL(int w, int h);
@@ -57,9 +57,9 @@ void initOpenGL(int w, int h);
 
 #pragma region Init
 
-void CV::init(int w, int h, const char* title)
+void CV::init(int w, int h, const char* title, bool antiAliasing)
 {
-    initGlfw(w, h, title); // inicializa glfw e janela
+    initGlfw(w, h, title, antiAliasing); // inicializa glfw e janela
     initGlew(); // inicializa glew
     initCallbacks(); // seta callbacks pro user
     initOpenGL(w, h);
@@ -68,7 +68,7 @@ void CV::init(int w, int h, const char* title)
     controller.init();
 }
 
-void initGlfw(int w, int h, const char* title) {
+void initGlfw(int w, int h, const char* title, bool antiAliasing) {
     if (!glfwInit()) {
         // get error description
         const char* description;
@@ -84,7 +84,12 @@ void initGlfw(int w, int h, const char* title) {
     /*glfwWindowHint(GLFW_CONTEXT_VERSION_MAJOR, 4);
     glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, 0);
     glfwWindowHint(GLFW_OPENGL_PROFILE, GLFW_OPENGL_CORE_PROFILE);*/
-    glfwWindowHint(GLFW_SAMPLES, 0); // desliga anti-aliasing
+    if (antiAliasing) {
+        glfwWindowHint(GLFW_SAMPLES, 8); // 8xMSAA
+    }
+    else {
+        glfwWindowHint(GLFW_SAMPLES, 0); // desliga anti-aliasing
+    }
 
     window = glfwCreateWindow(screenWidth, screenHeight, title, NULL, NULL);
     if (!window)
@@ -331,9 +336,10 @@ void CV::color(float r, float g, float b)
     color(r, g, b, 1);
 }
 
-void CV::color(int index)
+void CV::color(CV::Color color)
 {
-    color(Colors[index][0], Colors[index][1], Colors[index][2]);
+	const int index = static_cast<int>(color);
+    CV::color(Colors[index][0], Colors[index][1], Colors[index][2]);
 }
 
 void CV::clear(float r, float g, float b)

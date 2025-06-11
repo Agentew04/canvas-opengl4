@@ -14,9 +14,28 @@
 
 extern int screenWidth, screenHeight;
 
+
 class CV //classe Canvas2D
 {
 public:
+
+    enum class Color {
+        Black,
+        Gray,
+        Red,
+        Green,
+        Blue,
+        Cyan,
+        Magenta,
+        Yellow,
+        Orange,
+        Brown,
+        Olive,
+        unnamed1,
+        unnamed2,
+        White
+    };
+
     //funcoes para desenho de ponto e linha
     static void point(float x, float y); //coordeandas do ponto
     static void point(Vector2 pos); //coordeandas do ponto
@@ -45,7 +64,7 @@ public:
     //especifica a cor de desenho e de limpeza de tela
     static void color(float r, float g, float b);
     static void color(float r, float g, float b, float alpha);
-    static void color(int index);
+    static void color(Color color);
 
     static void clear(float r, float g, float b);
 
@@ -60,7 +79,7 @@ public:
     static void translate(Vector2 pos);
 
     //funcao de inicializacao da Canvas2D. Recebe a largura, altura, e um titulo para a janela
-    static void init(int w, int h, const char* title);
+    static void init(int w, int h, const char* title, bool antiAliasing);
 
     //funcao para executar a Canvas2D
     static void run();

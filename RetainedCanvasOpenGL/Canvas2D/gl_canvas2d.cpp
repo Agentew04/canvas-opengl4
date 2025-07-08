@@ -151,7 +151,7 @@ void initCallbacks() {
 void initOpenGL(int w, int h) {
     // Configuracoes de OpenGL
     glClearColor(0.0f, 0.0f, 0.0f, 1.0f);
-    glEnable(GL_DEPTH_TEST);
+    glDisable(GL_DEPTH_TEST);
     glDisable(GL_MULTISAMPLE);
     glDepthFunc(GL_LESS);
     glEnable(GL_BLEND);

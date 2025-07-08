@@ -81,11 +81,11 @@ void Controller::createUiBuffers() {
     lineStructure.vbo_positions = vbo[0];
     lineStructure.vbo_colors = vbo[1];
     glBindBuffer(GL_ARRAY_BUFFER, lineStructure.vbo_positions);
-    glBufferData(GL_ARRAY_BUFFER, 0, nullptr, GL_DYNAMIC_DRAW);
+    //glBufferData(GL_ARRAY_BUFFER, 0, nullptr, GL_DYNAMIC_DRAW);
     glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 0, nullptr);
     glEnableVertexAttribArray(0);
     glBindBuffer(GL_ARRAY_BUFFER, lineStructure.vbo_colors);
-    glBufferData(GL_ARRAY_BUFFER, 0, nullptr, GL_DYNAMIC_DRAW);
+    //glBufferData(GL_ARRAY_BUFFER, 0, nullptr, GL_DYNAMIC_DRAW);
     glVertexAttribPointer(1, 3, GL_FLOAT, GL_FALSE, 0, nullptr);
     glEnableVertexAttribArray(1);
 }
@@ -197,12 +197,12 @@ void Controller::processRect(const CommandRect& cmd) {
 
     if (cmd.fill) {
         fillStructure.reset();
-        fillStructure.positions.push_back(glm::vec3(x1, y1, 1));
-        fillStructure.positions.push_back(glm::vec3(x2, y1, 1));
-        fillStructure.positions.push_back(glm::vec3(x2, y2, 1));
-        fillStructure.positions.push_back(glm::vec3(x1, y1, 1));
-        fillStructure.positions.push_back(glm::vec3(x2, y2, 1));
-        fillStructure.positions.push_back(glm::vec3(x1, y2, 1));
+        fillStructure.positions.push_back(glm::vec3(x1, y1, 0));
+        fillStructure.positions.push_back(glm::vec3(x2, y1, 0));
+        fillStructure.positions.push_back(glm::vec3(x2, y2, 0));
+        fillStructure.positions.push_back(glm::vec3(x1, y1, 0));
+        fillStructure.positions.push_back(glm::vec3(x2, y2, 0));
+        fillStructure.positions.push_back(glm::vec3(x1, y2, 0));
         for (int i = 0; i < 6; i++) {
             fillStructure.colors.push_back(color);
         }
@@ -210,14 +210,14 @@ void Controller::processRect(const CommandRect& cmd) {
     }
     else {
 		lineStructure.reset();
-        lineStructure.positions.push_back(glm::vec3(x1, y1, 1));
-        lineStructure.positions.push_back(glm::vec3(x2, y1, 1));
-        lineStructure.positions.push_back(glm::vec3(x2, y1, 1));
-        lineStructure.positions.push_back(glm::vec3(x2, y2, 1));
-        lineStructure.positions.push_back(glm::vec3(x2, y2, 1));
-        lineStructure.positions.push_back(glm::vec3(x1, y2, 1));
-        lineStructure.positions.push_back(glm::vec3(x1, y2, 1));
-        lineStructure.positions.push_back(glm::vec3(x1, y1, 1));
+        lineStructure.positions.push_back(glm::vec3(x1, y1, 0));
+        lineStructure.positions.push_back(glm::vec3(x2, y1, 0));
+        lineStructure.positions.push_back(glm::vec3(x2, y1, 0));
+        lineStructure.positions.push_back(glm::vec3(x2, y2, 0));
+        lineStructure.positions.push_back(glm::vec3(x2, y2, 0));
+        lineStructure.positions.push_back(glm::vec3(x1, y2, 0));
+        lineStructure.positions.push_back(glm::vec3(x1, y2, 0));
+        lineStructure.positions.push_back(glm::vec3(x1, y1, 0));
         for (int i = 0; i < 8; i++) {
             lineStructure.colors.push_back(color);
         }
@@ -229,12 +229,12 @@ void Controller::processPoint(const CommandPoint& cmd){
 	float x = cmd.x + translation.x;
 	float y = cmd.y + translation.y;
 	fillStructure.reset();
-    fillStructure.positions.push_back(glm::vec3(x, y, 1));
-    fillStructure.positions.push_back(glm::vec3(x+1, y, 1));
-    fillStructure.positions.push_back(glm::vec3(x+1, y+1, 1));
-    fillStructure.positions.push_back(glm::vec3(x, y, 1));
-    fillStructure.positions.push_back(glm::vec3(x+1, y+1, 1));
-    fillStructure.positions.push_back(glm::vec3(x, y+1, 1));
+    fillStructure.positions.push_back(glm::vec3(x, y, 0));
+    fillStructure.positions.push_back(glm::vec3(x+1, y, 0));
+    fillStructure.positions.push_back(glm::vec3(x+1, y+1, 0));
+    fillStructure.positions.push_back(glm::vec3(x, y, 0));
+    fillStructure.positions.push_back(glm::vec3(x+1, y+1, 0));
+    fillStructure.positions.push_back(glm::vec3(x, y+1, 0));
     for (int i = 0; i < 6; i++) {
         fillStructure.colors.push_back(color);
     }
@@ -256,16 +256,16 @@ void Controller::processCircle(const CommandCircle& cmd){
 
         if (cmd.fill) {
 			
-            structure.positions.push_back(glm::vec3(x, y, 1));
-            structure.positions.push_back(glm::vec3(x1, y1, 1));
-            structure.positions.push_back(glm::vec3(x2, y2, 1));
+            structure.positions.push_back(glm::vec3(x, y, 0));
+            structure.positions.push_back(glm::vec3(x1, y1, 0));
+            structure.positions.push_back(glm::vec3(x2, y2, 0));
             for (int j = 0; j < 3; j++) {
                 structure.colors.push_back(color);
             }
         }
         else {
-            structure.positions.push_back(glm::vec3(x1, y1, 1));
-            structure.positions.push_back(glm::vec3(x2, y2, 1));
+            structure.positions.push_back(glm::vec3(x1, y1, 0));
+            structure.positions.push_back(glm::vec3(x2, y2, 0));
             for (int j = 0; j < 2; j++) {
                 structure.colors.push_back(color);
             }
@@ -289,8 +289,8 @@ void Controller::processLine(const CommandLine& cmd){
 	float x2 = cmd.x2 + translation.x;
 	float y2 = cmd.y2 + translation.y;
 	lineStructure.reset();
-	lineStructure.positions.push_back(glm::vec3(x1, y1, 1));
-	lineStructure.positions.push_back(glm::vec3(x2, y2, 1));
+	lineStructure.positions.push_back(glm::vec3(x1, y1, 0));
+	lineStructure.positions.push_back(glm::vec3(x2, y2, 0));
     for (int i = 0; i < 2; i++) {
         lineStructure.colors.push_back(color);
     }
@@ -316,12 +316,12 @@ void Controller::processText(const CommandText& cmd) {
 		float x2 = cursor.x + glyph.planeRight * cmd.fontSize;
 		float y2 = cursor.y + glyph.planeTop * cmd.fontSize;
 
-		textStructure.positions.push_back(glm::vec3(x1, y1, 1));
-		textStructure.positions.push_back(glm::vec3(x2, y1, 1));
-		textStructure.positions.push_back(glm::vec3(x2, y2, 1));
-		textStructure.positions.push_back(glm::vec3(x1, y1, 1));
-		textStructure.positions.push_back(glm::vec3(x2, y2, 1));
-		textStructure.positions.push_back(glm::vec3(x1, y2, 1));
+		textStructure.positions.push_back(glm::vec3(x1, y1, 0));
+		textStructure.positions.push_back(glm::vec3(x2, y1, 0));
+		textStructure.positions.push_back(glm::vec3(x2, y2, 0));
+		textStructure.positions.push_back(glm::vec3(x1, y1, 0));
+		textStructure.positions.push_back(glm::vec3(x2, y2, 0));
+		textStructure.positions.push_back(glm::vec3(x1, y2, 0));
 
 		for (int i = 0; i < 6; i++) {
 			textStructure.colors.push_back(color);
@@ -354,6 +354,6 @@ void Controller::processTranslate(const CommandTranslate& cmd) {
 }
 
 void Controller::processClear(const CommandClear& cmd) {
-    glClearColor(cmd.r, cmd.g, cmd.b, 1.0f);
     glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+    glClearColor(cmd.r, cmd.g, cmd.b, 1.0f);
 }

@@ -2,19 +2,19 @@
 
 #include <vector>
 #include <chrono>
+#define GLEW_STATIC
+#include <GL/glew.h>
+#include <glm/glm.hpp>
 
 int screenWidth, screenHeight;
 
-
-std::chrono::high_resolution_clock::time_point lastTime;
-std::vector<float> deltas;
-
-int offset = 0;
 void render() {
-    CV::clear(1, 0.2, 0.2);
+    CV::clear(1, 0, 0);
+	CV::translate(100, 100);
     CV::color(1, 1, 1);
-	CV::rect(100, 100, 200, 200);
-    CV::text(300, 300, "Hello, World!", 50);
+    CV::rectFill(100, 100, 200, 200);
+    CV::color(0, 1, 1);
+	CV::text(150, 150, "Hello, Canvas2D!", 20);
 }
 
 void keyboard(int key) {

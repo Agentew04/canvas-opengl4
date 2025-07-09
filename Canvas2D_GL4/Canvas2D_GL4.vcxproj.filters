@@ -1,0 +1,75 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <ItemGroup>
+    <ClCompile Include="main.cpp" />
+    <ClCompile Include="Canvas2D\Controller.cpp">
+      <Filter>Canvas</Filter>
+    </ClCompile>
+    <ClCompile Include="Canvas2D\Fonts.cpp">
+      <Filter>Canvas</Filter>
+    </ClCompile>
+    <ClCompile Include="Canvas2D\gl_canvas2d.cpp">
+      <Filter>Canvas</Filter>
+    </ClCompile>
+    <ClCompile Include="Canvas2D\glslprogram.cpp">
+      <Filter>Canvas</Filter>
+    </ClCompile>
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="Vector2.h" />
+    <ClInclude Include="Canvas2D\Controller.h">
+      <Filter>Canvas</Filter>
+    </ClInclude>
+    <ClInclude Include="Canvas2D\Fonts.h">
+      <Filter>Canvas</Filter>
+    </ClInclude>
+    <ClInclude Include="Canvas2D\gl_canvas2d.h">
+      <Filter>Canvas</Filter>
+    </ClInclude>
+    <ClInclude Include="Canvas2D\glslprogram.h">
+      <Filter>Canvas</Filter>
+    </ClInclude>
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\arial.csv">
+      <Filter>Resources</Filter>
+    </None>
+    <None Include="Resources\arial_softmask.csv">
+      <Filter>Resources</Filter>
+    </None>
+    <None Include="Shaders\ui.vert">
+      <Filter>Shaders</Filter>
+    </None>
+    <None Include="Shaders\text.vert">
+      <Filter>Shaders</Filter>
+    </None>
+    <None Include="Shaders\text_msdf.frag">
+      <Filter>Shaders</Filter>
+    </None>
+    <None Include="Shaders\text_softmask.frag">
+      <Filter>Shaders</Filter>
+    </None>
+    <None Include="Shaders\ui.frag">
+      <Filter>Shaders</Filter>
+    </None>
+  </ItemGroup>
+  <ItemGroup>
+    <Text Include="Resources\arial.txt">
+      <Filter>Resources</Filter>
+    </Text>
+    <Text Include="Resources\arial_softmask.txt">
+      <Filter>Resources</Filter>
+    </Text>
+  </ItemGroup>
+  <ItemGroup>
+    <Filter Include="Resources">
+      <UniqueIdentifier>{c9305ecc-1dae-464b-b3be-3879dd9d8c73}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Canvas">
+      <UniqueIdentifier>{bcfcf425-1835-4b65-9dfd-31d92f52fb8a}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Shaders">
+      <UniqueIdentifier>{b94049d8-d787-4c88-9a08-5a0c28153f32}</UniqueIdentifier>
+    </Filter>
+  </ItemGroup>
+</Project>

@@ -3,9 +3,9 @@
 int screenWidth, screenHeight;
 
 void render() {
-    CV::clear(1, 0, 0);
+    CV::clear(0, 0, 0);
 	CV::translate(100, 100);
-    CV::color(1, 1, 1);
+    CV::color(CV::Color::Teal);
     CV::rectFill(100, 100, 200, 200);
     CV::color(0, 1, 1);
 	CV::text(150, 150, "Hello, Canvas2D!", 20);

@@ -4,13 +4,16 @@
 * Data: 08/07/2025
 * 
 * Arquivo com definicoes de structs usados por todas as
-* classes que renderizam fontes. Criado para nao duplicar
-* codigo nos arquivos de renderizacao (M)SDF e SOFTMASK.
+* classes que renderizam fontes.
+* 
+* Remarks:
+* Ver https://github.com/Chlumsky/msdf-atlas-gen.
+* arial.csv e arial.txt foram criados com comando: 
+* .\msdf-atlas-gen.exe -font .\arial.ttf -type msdf -format textfloat -imageout arial.txt -csv arial.csv -pxrange 3
+* .\msdf-atlas-gen.exe -font .\arial.ttf -type softmask -format textfloat -imageout arial_softmask.txt -csv arial.csv -pxrange 3
+*   -> Adicionar width e height na 1a linha do .txt
 */
 
-// Ver https://github.com/Chlumsky/msdf-atlas-gen.
-// arial.csv e arial.txt foram criados com comando: 
-//	.\msdf-atlas-gen.exe -font .\arial.ttf -type msdf -format textfloat -imageout arial.txt -csv arial.csv -pxrange 3
 
 #include <string>
 #include <map>
@@ -43,7 +46,7 @@ public:
 	/// Le um arquivo csv com o layout do atlas gerado pela ferramenta msdf-atlas-gen.
 	/// </summary>
 	/// <param name="filepath">O caminho do csv</param>
-	/// <returns></returns>
+	/// <param name="out">Referencia para o mapa onde os glifos serao armazenados.</param>
 	static void readLayoutFile(const std::string& filepath, std::map<int, Glyph>& out);
 };
 
@@ -73,9 +76,10 @@ struct Atlas {
 	~Atlas();
 
 	/// <summary>
-	/// Le uma textura de floats
+	/// Le uma textura de floats. Espera um arquivo no formato: 
+	/// width height\nfloat float float...\nfloat float float ...EOF
 	/// </summary>
-	/// <param name="filepath"></param>
-	/// <returns></returns>
-	static void readAtlas(const std::string& filepath, Atlas& atlas);
+	/// <param name="filepath">O caminho do arquivo do atlas</param>
+	/// <param name="pixelSize">Quantos bytes cada pixel tem. Para SDF e softmask, usar 1. Para MSDF usar 3.</param>
+	static void readAtlas(const std::string& filepath, Atlas& atlas, int pixelSize);
 };

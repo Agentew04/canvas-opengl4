@@ -4,7 +4,9 @@
 * 
 * Cabecalho original da Canvas2D.
 * Unica adaptacao eh a adicao do fontSize
-* nas funcoes text().
+* nas funcoes text(). Adicionado tambem
+* enum com cores nomeadas ao inves de 
+* acessar cores por indice.
 */
 
 
@@ -25,14 +27,14 @@ public:
         Red,
         Green,
         Blue,
-        Cyan,
+        Aqua,
         Magenta,
         Yellow,
         Orange,
         Brown,
         Olive,
-        unnamed1,
-        unnamed2,
+        Teal,
+        Purple,
         White
     };
 

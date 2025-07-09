@@ -2,9 +2,9 @@
 * Autor: Rodrigo Appelt
 * Data: 10/03/2025
 *
-* Classe que controla a logica de construcao dos
-* comandos enviados pela Canvas2D. 
-* Tambem gerencia os VBOs, VAOs e shaders.
+* Classe que renderiza comandos vindos da Canvas2D
+* usando VAOs, VBOs e shaders. Tambem se encarrega de renderizar
+* textos.
 */
 
 #include "Controller.h"
@@ -46,7 +46,7 @@ void Controller::compileShaders() {
 
 void Controller::init() {
     // agora que nao tem classe especifica pro sdf, lemos aqui
-    Atlas::readAtlas("Resources/arial_softmask.txt", font_atlas);
+    Atlas::readAtlas("Resources/arial_softmask.txt", font_atlas, 1); // 1 para softmask/sdf. 3 para msdf
 	Glyph::readLayoutFile("Resources/arial_softmask.csv", font_glyphs);
 
     createUiBuffers();

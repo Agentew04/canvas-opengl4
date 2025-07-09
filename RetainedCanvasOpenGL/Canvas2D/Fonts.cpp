@@ -11,7 +11,7 @@
 #include <fstream>
 #include <iostream>
 
-void Atlas::readAtlas(const std::string& filepath, Atlas& atlas) {
+void Atlas::readAtlas(const std::string& filepath, Atlas& atlas, int pixelSize) {
 	auto file = std::ifstream(filepath);
 
 	if (!file.is_open()) {
@@ -21,11 +21,11 @@ void Atlas::readAtlas(const std::string& filepath, Atlas& atlas) {
 	int width;
 	int height;
 	file >> width >> height;
-	atlas.data = new float[width * height * 3]; // x3 pq msdf eh RGB. single channel eh o SDF normal
+	atlas.data = new float[width * height * pixelSize]; // x3 pq msdf eh RGB. single channel eh o SDF normal
 	atlas.width = width;
 	atlas.height = height;
 
-	for (int i = 0; i < width * height * 3; i++) {
+	for (int i = 0; i < width * height * pixelSize; i++) {
 		file >> atlas.data[i];
 	}
 	file.close();

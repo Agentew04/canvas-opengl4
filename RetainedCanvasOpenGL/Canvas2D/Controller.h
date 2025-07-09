@@ -11,7 +11,7 @@
 #include <vector>
 #include <glm/glm.hpp>
 #include "glslprogram.h"
-#include "Sdf.h"
+#include "Fonts.h"
 
 enum class CommandType {
 	TYPE_NONE,
@@ -142,7 +142,10 @@ private:
 	int &screenHeight;
 	GLSLProgram uiShader;
 	GLSLProgram textShader;
-	Sdf sdf;
+
+	Atlas font_atlas;
+	std::map<int, Glyph> font_glyphs;
+
 	// essas structures tem os vbos e vaos para cada tipo de desenho
 	DrawStructure fillStructure;
 	DrawStructure lineStructure;

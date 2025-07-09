@@ -33,8 +33,8 @@
     <ClCompile Include="Canvas2D\glslprogram.cpp">
       <Filter>Canvas2D</Filter>
     </ClCompile>
-    <ClCompile Include="Canvas2D\Sdf.cpp">
-      <Filter>Canvas2D</Filter>
+    <ClCompile Include="Canvas2D\Fonts.cpp">
+      <Filter>Arquivos de Origem</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -50,7 +50,7 @@
     <ClInclude Include="Canvas2D\Controller.h">
       <Filter>Arquivos de Cabeçalho</Filter>
     </ClInclude>
-    <ClInclude Include="Canvas2D\Sdf.h">
+    <ClInclude Include="Canvas2D\Fonts.h">
       <Filter>Arquivos de Cabeçalho</Filter>
     </ClInclude>
   </ItemGroup>
@@ -64,16 +64,21 @@
     <None Include="Resources\arial.csv">
       <Filter>Arquivos de Recurso</Filter>
     </None>
-    <None Include="Shaders\text.frag">
+    <None Include="Shaders\text_msdf.frag">
       <Filter>Shaders</Filter>
     </None>
     <None Include="Shaders\text.vert">
       <Filter>Shaders</Filter>
     </None>
+    <None Include="Shaders\text_softmask.frag">
+      <Filter>Shaders</Filter>
+    </None>
+    <None Include="Resources\arial_softmask.csv" />
   </ItemGroup>
   <ItemGroup>
     <Text Include="Resources\arial.txt">
       <Filter>Arquivos de Recurso</Filter>
     </Text>
+    <Text Include="Resources\arial_softmask.txt" />
   </ItemGroup>
 </Project>

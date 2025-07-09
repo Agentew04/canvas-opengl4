@@ -133,28 +133,31 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClCompile Include="Canvas2D\Fonts.cpp" />
     <ClCompile Include="Canvas2D\glslprogram.cpp" />
     <ClCompile Include="Canvas2D\gl_canvas2d.cpp" />
     <ClCompile Include="main.cpp" />
     <ClCompile Include="Canvas2D\Controller.cpp" />
-    <ClCompile Include="Canvas2D\Sdf.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="Canvas2D\Fonts.h" />
     <ClInclude Include="Canvas2D\glslprogram.h" />
     <ClInclude Include="Canvas2D\gl_canvas2d.h" />
     <ClInclude Include="Canvas2D\Controller.h" />
-    <ClInclude Include="Canvas2D\Sdf.h" />
     <ClInclude Include="Vector2.h" />
   </ItemGroup>
   <ItemGroup>
     <None Include="Resources\arial.csv" />
-    <None Include="Shaders\text.frag" />
+    <None Include="Resources\arial_softmask.csv" />
+    <None Include="Shaders\text_msdf.frag" />
     <None Include="Shaders\text.vert" />
+    <None Include="Shaders\text_softmask.frag" />
     <None Include="Shaders\ui.frag" />
     <None Include="Shaders\ui.vert" />
   </ItemGroup>
   <ItemGroup>
     <Text Include="Resources\arial.txt" />
+    <Text Include="Resources\arial_softmask.txt" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

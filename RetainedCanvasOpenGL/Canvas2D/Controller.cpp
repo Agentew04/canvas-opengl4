@@ -16,9 +16,6 @@
 #include <glm/gtc/matrix_transform.hpp>
 #include <array>
 
-#include "Sdf.h"
-
-
 void DrawStructure::reset() {
     positions.clear();
     colors.clear();
@@ -37,7 +34,7 @@ void Controller::compileShaders() {
         uiShader.link();
 
 		textShader.compileShader("Shaders/text.vert", GLSLShader::VERTEX);
-		textShader.compileShader("Shaders/text.frag", GLSLShader::FRAGMENT);
+		textShader.compileShader("Shaders/text_softmask.frag", GLSLShader::FRAGMENT);
         textShader.link();
     }
     catch (GLSLProgramException& e) {
@@ -48,7 +45,9 @@ void Controller::compileShaders() {
 }
 
 void Controller::init() {
-    sdf.init();
+    // agora que nao tem classe especifica pro sdf, lemos aqui
+    Atlas::readAtlas("Resources/arial_softmask.txt", font_atlas);
+	Glyph::readLayoutFile("Resources/arial_softmask.csv", font_glyphs);
 
     createUiBuffers();
     createTextBuffers();
@@ -115,11 +114,6 @@ void Controller::createTextBuffers() {
 }
 
 void Controller::createTextures() {
-    auto atlas = sdf.getAtlas();
-    float* data = atlas.data;
-    int width = atlas.width;
-    int height = atlas.height;
-
     glGenTextures(1, &textStructure.texture);
     glBindTexture(GL_TEXTURE_2D, textStructure.texture);
     
@@ -129,7 +123,7 @@ void Controller::createTextures() {
     glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
     glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
     // upload dos dados
-    glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB, width, height, 0, GL_RGB, GL_FLOAT, data);
+    glTexImage2D(GL_TEXTURE_2D, 0, GL_RED, font_atlas.width, font_atlas.height, 0, GL_RED, GL_FLOAT, font_atlas.data);
 
     glBindTexture(GL_TEXTURE_2D, 0);
 }
@@ -299,17 +293,16 @@ void Controller::processLine(const CommandLine& cmd){
 
 void Controller::processText(const CommandText& cmd) {
 	glm::vec2 cursor = { cmd.x + translation.x, cmd.y + translation.y };
-	auto str = cmd.t;
-	const Sdf::Atlas &atlas = sdf.getAtlas();
+	const char* str = cmd.t;
     int i = 0;
     char currentChar = str[0];
 	textStructure.reset();
     while (currentChar != '\0') {
-		const Sdf::Glyph &glyph = sdf.getGlyph(currentChar);
+		const Glyph& glyph = font_glyphs[currentChar];
 
         // emit tris
-		glm::vec2 uvBottomLeft = { glyph.atlasLeft / atlas.width, glyph.atlasBottom / atlas.height };
-		glm::vec2 uvTopRight = { glyph.atlasRight / atlas.width, glyph.atlasTop / atlas.height };
+		glm::vec2 uvBottomLeft = { glyph.atlasLeft / font_atlas.width, glyph.atlasBottom / font_atlas.height };
+		glm::vec2 uvTopRight = { glyph.atlasRight / font_atlas.width, glyph.atlasTop / font_atlas.height };
 
 		float x1 = cursor.x + glyph.planeLeft * cmd.fontSize;
 		float y1 = cursor.y + glyph.planeBottom * cmd.fontSize;

@@ -151,11 +151,16 @@ void initCallbacks() {
 void initOpenGL(int w, int h) {
     // Configuracoes de OpenGL
     glClearColor(0.0f, 0.0f, 0.0f, 1.0f);
-    glDisable(GL_DEPTH_TEST);
-    glDisable(GL_MULTISAMPLE);
+
+    glDisable(GL_DEPTH_TEST); // habilitar isso se estivar usando retained mode!
     glDepthFunc(GL_LESS);
+
+	// teoricamente desabilita o anti-aliasing
+    glDisable(GL_MULTISAMPLE);
+
+    // habilita transparencia
     glEnable(GL_BLEND);
-    glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
+    glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA); 
 }
 
 #pragma endregion

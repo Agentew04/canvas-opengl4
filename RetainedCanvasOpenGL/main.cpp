@@ -1,11 +1,5 @@
 #include "Canvas2D/gl_canvas2d.h"
 
-#include <vector>
-#include <chrono>
-#define GLEW_STATIC
-#include <GL/glew.h>
-#include <glm/glm.hpp>
-
 int screenWidth, screenHeight;
 
 void render() {
